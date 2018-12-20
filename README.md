@@ -1,6 +1,10 @@
 # Neurofuzzy_project
 
 The project is for ce448 Neural Fuzzy Networks 6-month project
+To download the repository run:
+```
+git clone https://bitbucket.org/SotirisEvangelou/neurofuzzy_project.git
+```
 
 # Prerequisites
 
