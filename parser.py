@@ -6,6 +6,10 @@
 #% ---- the id of references of this paper (there are multiple lines, with each indicating a reference)-----> infotype = 6
 #! --- Abstract -----> infotype = 7
 
+# THIS PROGRAM SAVES THE WHOLE PARSED TXT LIST OF ITEMS IN THE PICKLE FILE CALLED parsedtxt
+
+import pickle
+
 class Items_struct():
     def __init__(self, title):
         self.title = title
@@ -16,49 +20,48 @@ class Items_struct():
         self.abstract = ''
 
     def ret_title(self):
-    	return self.title
-    	
+        return self.title
     def ret_index(self):
-    	return int(self.index)
+        return int(self.index)
 
     def set_author(self,name):
-    	self.authors.append(name)
+        self.authors.append(name)
 
     def set_year(self,year):
-    	self.year = year
+        self.year = year
 
     def ret_year(self):
-    	return int(self.year)
+        return int(self.year)
 
     def set_pub_venue(self,pub_venue):
-    	self.pub_venue = pub_venue
+        self.pub_venue = pub_venue
 
     def set_index(self,index):
-    	self.index = index
+        self.index = index
 
     def set_id_refs(self,id_ref):
-    	self.id_refs.append(id_ref)
+        self.id_refs.append(id_ref)
 
     def ret_id_refs(self):
-    	return self.id_refs
+        return self.id_refs
 
     def set_abstract(self,abstract):
-    	self.abstract = abstract
+        self.abstract = abstract
 
     def print_item(self):
-    	print '~Printing item ...'
-    	print self.title
-    	print self.authors
-    	print self.year
-    	if self.pub_venue:
-    		print self.pub_venue
-    	if self.index:
-    		print self.index
-    	if self.id_refs:
-    		print self.id_refs
-    	if self.abstract:
-    		print self.abstract
-    	print '\n'
+        print '~Printing item ...'
+        print self.title
+        print self.authors
+        print self.year
+        if self.pub_venue:
+            print self.pub_venue
+        if self.index:
+            print self.index
+        if self.id_refs:
+            print self.id_refs
+        if self.abstract:
+            print self.abstract
+        print '\n'
 
 
 def splitter(line):
@@ -89,7 +92,6 @@ def main():
 		citations = []
 		authors = []
 		while line:
-			
 			line = inp.readline()
 			content,infotype = splitter(line)
 			if infotype == 1:
@@ -114,11 +116,15 @@ def main():
 				if content:
 					new_item.set_abstract(content.split('\n')[0])
 			else:
-					item_list.append(new_item)
-				#new_item.print_item()
+                            if len(new_item.ret_id_refs()) == 0 and new_item.ret_year() > 1980:
+                                continue
+                            else:
+                                item_list.append(new_item)
 
 		inp.close()
-		return item_list
+        with open("parsedtxt" , "wb") as f:
+            pickle.dump(item_list, f)
+        return item_list
 
 if __name__ == '__main__':
 	main()
