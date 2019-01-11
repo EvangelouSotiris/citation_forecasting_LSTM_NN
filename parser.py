@@ -8,7 +8,7 @@
 
 # THIS PROGRAM SAVES THE WHOLE PARSED TXT LIST OF ITEMS IN THE PICKLE FILE CALLED parsedtxt
 
-import pickle
+import cPickle
 
 class Items_struct():
     def __init__(self, title):
@@ -116,14 +116,14 @@ def main():
 				if content:
 					new_item.set_abstract(content.split('\n')[0])
 			else:
-                            if len(new_item.ret_id_refs()) == 0 and new_item.ret_year() > 1980:
+                            if len(new_item.ret_id_refs()) == 0 and new_item.ret_year() > 1990:
                                 continue
                             else:
                                 item_list.append(new_item)
 
 		inp.close()
         with open("parsedtxt" , "wb") as f:
-            pickle.dump(item_list, f)
+            cPickle.dump(item_list, f)
         return item_list
 
 if __name__ == '__main__':
