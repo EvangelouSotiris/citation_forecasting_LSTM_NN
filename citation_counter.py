@@ -3,13 +3,10 @@
 
 def counter_by_list(index, certlist):
     total_citations = 0
-    for item in certlist:
-        if item.ret_index() == index:
-            continue
-        else:
-            refs = item.ret_id_refs()
-            for refed_index in refs:
-                if index == refed_index:
-                    total_citations += 1
+    for i in range(len(certlist)):
+        id_refs = certlist[i].ret_id_refs()
+        for ref in id_refs:
+            if index == int(ref):
+                total_citations = total_citations + 1
 
     return total_citations

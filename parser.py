@@ -83,48 +83,44 @@ def splitter(line):
 		return 'emptyline',0
 
 def main():
-
-	item_list = []
-
-	with open('../Project/outputacm.txt','r') as inp:
-		line = inp.readline()
-		new_item = []
-		citations = []
-		authors = []
-		while line:
-			line = inp.readline()
-			content,infotype = splitter(line)
-			if infotype == 1:
-				new_item = Items_struct(content.split('\n')[0])
-			elif infotype == 2:
-				for i in range(content.count(',')):
-					new_item.set_author(content.split(',')[i])
-				new_item.set_author(content.split(',')[content.count(',')].split('\n')[0])
-			elif infotype == 3:
-				new_item.set_year(content.split('\n')[0])
-			elif infotype == 4:
-				if content:
-					new_item.set_pub_venue(content.split('\n')[0])
-			elif infotype == 5:
-				if content:
-					new_item.set_index(content.split('\n')[0])
-			elif infotype == 6:
-				if content:
-					citations.append(content.split('\n')[0])
-					new_item.set_id_refs(content.split('\n')[0])
-			elif infotype == 7:
-				if content:
-					new_item.set_abstract(content.split('\n')[0])
-			else:
-                            if len(new_item.ret_id_refs()) == 0 and new_item.ret_year() > 1990:
-                                continue
-                            else:
-                                item_list.append(new_item)
-
-		inp.close()
-        with open("parsedtxt" , "wb") as f:
-            cPickle.dump(item_list, f)
-        return item_list
-
+    item_list = []
+    whole_list = []
+    with open('../Project/outputacm.txt','r') as inp:
+        line = inp.readline()
+        new_item = []
+        citations = []
+        authors = []
+        while line:
+            line = inp.readline()
+            content,infotype = splitter(line)
+            if infotype == 1:
+                new_item = Items_struct(content.split('\n')[0])
+            elif infotype == 2:
+                for i in range(content.count(',')):
+                    new_item.set_author(content.split(',')[i])
+                new_item.set_author(content.split(',')[content.count(',')].split('\n')[0])
+            elif infotype == 3:
+                new_item.set_year(content.split('\n')[0])
+            elif infotype == 4:
+                if content:
+                    new_item.set_pub_venue(content.split('\n')[0])
+            elif infotype == 5:
+                if content:
+                    new_item.set_index(content.split('\n')[0])
+            elif infotype == 6:
+                if content:
+                    citations.append(content.split('\n')[0])
+                    new_item.set_id_refs(content.split('\n')[0])
+            elif infotype == 7:
+                if content:
+                    new_item.set_abstract(content.split('\n')[0])
+            else:
+                refs = new_item.ret_id_refs()
+                if len(refs)!=0:
+                    item_list.append(new_item)
+                else:
+                    whole_list.append(new_item)
+        print 'Initial list with ' +str(len(item_list))+' elements and wholelist with ' + str(len(whole_list)) +' elements.'
+        return item_list,whole_list
 if __name__ == '__main__':
-	main()
+    main()
