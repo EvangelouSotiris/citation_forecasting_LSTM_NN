@@ -6,20 +6,17 @@ from parser import Items_struct
 from threading import Thread
 
 def purge(i, initial_list):
-    if i != 25:
+    if i != 24:
         end = i*10000 + 9999
     else:
         end = 246298
     start = i*10000
     newlist = []
-    #bar = Bar('Thread '+str(i)+ ' in range ('+str(i*10000)+','+str(end)+')' , max = end - i*10000)
     for j in range(start,end):
         if cit.counter_by_list(initial_list[j].ret_index() , initial_list) > 10:
             newlist.append(item)
-        if (j-start) % 100 == 0:
-            print 'Thread '+str(i) + ': '+str(j)+'/'+ str(end-start)
-        #bar.next()
-    #bar.finish()
+        if (j-start) % 10 == 0:
+            print 'Thread '+str(i) + ': '+str(j-start)+'/'+ str(end-start)
     return newlist
 
 if __name__ == '__main__':
