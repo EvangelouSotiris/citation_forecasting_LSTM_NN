@@ -118,8 +118,7 @@ def main():
                 refs = new_item.ret_id_refs()
                 if len(refs)!=0:
                     item_list.append(new_item)
-                else:
-                    whole_list.append(new_item)
+                whole_list.append(new_item)
         print 'Initial list with ' +str(len(item_list))+' elements and wholelist with ' + str(len(whole_list)) +' elements.'
         return item_list,whole_list
 if __name__ == '__main__':
