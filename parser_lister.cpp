@@ -35,6 +35,7 @@ int found_times(string line, string substring){
 
 int splitter(string line){
     if(found_times(line,"#*") != 0){
+        cout << line << ", #*" <<endl;
         return 1;
     }
     else if(found_times(line,"#@") != 0){
@@ -65,41 +66,55 @@ int main(int argc, const char * argv[]){
     string line;
     list<Items_struct> whole_list;
     
+    list<string> linelist;
+    
     if(fileinput.is_open()){
-        printf("opened outputacm.txt\n");
-        int counter = 0;
+        Items_struct new_item;
+        getline(fileinput,line);
         while (getline(fileinput,line)){
-            cout << counter << ": " << line << endl;
-            int infotype = splitter(line);
-            if(infotype == 1) {
-                Items_struct new_item;
-                new_item.title = line.substr(2,line.length());
-                cout << new_item.title;
-                return 0;
-            }
-            else if(infotype == 2) {
-
-            }
-            else if(infotype == 3) {
-
-            }
-            else if(infotype == 4) {
-
-            }
-            else if(infotype == 5) {
-
-            }
-            else if(infotype == 6) {
-
-            }
-            else if(infotype == 7) {
-
-            }
-            else{
-
-            }
+            linelist.push_back(line);
         }
     }
+    
     fileinput.close();
+    
+    int found;
+    Items_struct new_item;
+    int counter = 0;
+
+    for (list<string>::iterator it=linelist.begin(); it != linelist.end(); ++it) {
+        line = *it;
+        found = line.find("#*");
+        if (found != -1) {
+            new_item.title = line.substr(found + 2, line.length());
+            continue;
+        }
+        found = line.find("#t");
+        if (found != -1) {
+            new_item.year = atoi(line.substr(found + 2, line.length()).c_str());
+            continue;
+        }
+        found = line.find("#index");
+        if (found != -1) {
+            new_item.index = atoi(line.substr(found + 5, line.length()).c_str());
+            continue;
+        }
+        found = line.find("#%");
+        if (found != -1) {
+            new_item.id_refs.push_back(atoi(line.substr(found + 2, line.length()).c_str()));
+            continue;
+        }
+        if (line.compare("")==0){
+            whole_list.push_back(new_item);
+            new_item.title = "";
+            new_item.year = 0;
+            new_item.index = 0;
+            new_item.id_refs.clear();
+        }
+
+    }
+
+    whole_list.end()->print_item();
+
     return 0;
 }
