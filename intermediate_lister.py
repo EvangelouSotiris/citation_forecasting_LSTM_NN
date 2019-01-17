@@ -21,15 +21,12 @@ else:
         bar.next()
 
 for i in range(counter,len(itemlist)):
-    if counter % 1000 == 0:
-        val = raw_input('do u wanna stop and save?: ')
-        if val == 'y':
-            with open('stopped_at.txt','w') as stopped:
-                stopped.write(str(counter))
-                bar.finish()
-                with open('newlist','wb') as f:
-                    cPickle.dump(itemlist,f)
-                    exit(1)
+    if counter % 5000 == 0:
+        with open('stopped_at.txt','w') as stopped:
+            stopped.write(str(counter))
+            with open('newlist','wb') as f:
+                cPickle.dump(itemlist,f)
+            print 'saved at %d items' %counter
     refs = itemlist[i].ret_id_refs()
     for ref in refs:
         if wholelist[int(ref)] not in itemlist:
