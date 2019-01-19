@@ -6,6 +6,11 @@ using namespace std;
 
 class Items_struct{
     public:
+        Items_struct(){
+            title = "";
+            year = 0;
+            index = -1;
+        }
         string title;
         int year;
         int index;
@@ -23,6 +28,18 @@ class Items_struct{
     }
 };
 
+bool contains(list<int> ref_list, int item_to_search){
+    int curr;
+
+    for (list<int>::iterator it=ref_list.begin(); it != ref_list.end(); ++it) {
+        curr = *it;
+        if (curr == item_to_search){
+            return true;
+        }
+    }
+    return false;
+}
+
 int found_times(string line, string substring){
     int occurrences = 0;
     size_t start = 0;
@@ -33,35 +50,7 @@ int found_times(string line, string substring){
     }
 }
 
-int splitter(string line){
-    if(found_times(line,"#*") != 0){
-        cout << line << ", #*" <<endl;
-        return 1;
-    }
-    else if(found_times(line,"#@") != 0){
-        return 2;
-    }
-    else if(found_times(line,"#t") != 0){
-        return 3;
-    }
-    else if(found_times(line,"#c") != 0){
-        return 4;
-    }
-    else if(found_times(line,"#index") != 0){
-        return 5;
-    }
-    else if(found_times(line,"#%") != 0){
-        return 6;
-    }
-    else if(found_times(line,"#!") != 0){
-        return 7;
-    }
-    else {
-        return 0;
-    }
-}
-
-int main(int argc, const char * argv[]){
+list<Items_struct> creating_list(){
     ifstream fileinput ("../Project/outputacm.txt");
     string line;
     list<Items_struct> whole_list;
@@ -96,7 +85,7 @@ int main(int argc, const char * argv[]){
         }
         found = line.find("#index");
         if (found != -1) {
-            new_item.index = atoi(line.substr(found + 5, line.length()).c_str());
+            new_item.index = atoi(line.substr(found + 6, line.length()).c_str());
             continue;
         }
         found = line.find("#%");
@@ -111,10 +100,67 @@ int main(int argc, const char * argv[]){
             new_item.index = 0;
             new_item.id_refs.clear();
         }
-
+            
     }
 
-    whole_list.end()->print_item();
+    return whole_list;
+}
+/*
+int main(int argc, const char * argv[]){
+    list<Items_struct> whole_list;
+    Items_struct new_item;
+    int counter = 0;
+    
+    whole_list = creating_list();
+    cout << "Parsed the txt and created the list with all the items.\n\n";
+
+    list<Items_struct> items_with_refs;
+    list<int> significant_indexes;
+
+    for (list<Items_struct>::iterator it=whole_list.begin(); it != whole_list.end(); ++it) {
+        new_item = *it;
+        if(new_item.id_refs.empty()){
+            continue;
+        }
+        else{
+            items_with_refs.push_back(new_item);
+            significant_indexes.push_back(new_item.index);
+        }
+    }
+
+    cout << "Created list with all the items that reference others, and one with all these indexes ("<<items_with_refs.size()<<")."<<endl;
+
+    ofstream filetowrite;
+    filetowrite.open("indexes_so_far.txt");
+    for (list<int>::iterator it=significant_indexes.begin(); it != significant_indexes.end(); ++it){
+        filetowrite << *it << "\n";
+    }
+    filetowrite.close();
+
+    list<int> refs;
+    int t0 = time(NULL);
+    counter = 0;
+    for (list<Items_struct>::iterator it=items_with_refs.begin(); it != items_with_refs.end(); ++it) {
+        if ((counter % 100) == 0){
+            int t1 = time(NULL);
+            cout << counter <<" elements checked after " << t1-t0 << " seconds." << endl;
+        }
+        new_item = *it;
+        refs = new_item.id_refs;
+        for (list<int>::iterator ref=refs.begin(); ref != refs.end(); ++ref ){
+            if (!contains(significant_indexes,*ref)){
+                significant_indexes.push_back(*ref);
+            }
+        }
+        counter++;
+    } 
+
+    ofstream indexes_f;
+    indexes_f.open("indexes.txt");
+    for (list<int>::iterator it=significant_indexes.begin(); it != significant_indexes.end(); ++it){
+        indexes_f << *it << "\n";
+    }   
 
     return 0;
 }
+*/
