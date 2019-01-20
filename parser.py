@@ -121,5 +121,6 @@ def main():
                 whole_list.append(new_item)
         print 'Initial list with ' +str(len(item_list))+' elements and wholelist with ' + str(len(whole_list)) +' elements.'
         return item_list,whole_list
+
 if __name__ == '__main__':
     main()
