@@ -9,22 +9,18 @@ Professor's test set reader is availiable.
 """
 from random import shuffle
 
-def parse_timeseries(line, num = -1):
+def parse_timeseries(line):
 	curr_timeseries = []
-	i=0
+	i = 0
 	while True:
 		try:
 			citation = int(line.split(',')[i])
 			curr_timeseries.append(citation)
 			i += 1
-			if (num == i):
-				target_next_yr = int(line.split(',')[i])
-				target_after_5 = int(line.split(',')[i+4])
-				return curr_timeseries, target_next_yr, target_after_5
 		except IndexError:
-			return curr_timeseries,-1,-1
+			return curr_timeseries
 
-def create_datasets(datalength = None):
+def create_datasets():
 	# reading input_dataset.txt and creating a list with the lines to be parsed later on.
 	lines = []
 	with open('input_dataset.txt','r') as input_dataset:
@@ -34,14 +30,13 @@ def create_datasets(datalength = None):
 			newline = input_dataset.readline()
 	input_dataset.close()
 	# end
-
 	#parsing lines list and creating tuple list with tuple being (index, time series list)
-	tuplelist = []
+	all_datasets = []
 	for line in lines:
 		curr_index = int(line.split(':')[0])
-		curr_timeseries,target_next_yr,target_after_5 = parse_timeseries(line.split('[')[1].split(']')[0], datalength)
-		tuplelist.append((curr_index,curr_timeseries,target_next_yr,target_after_5))
-	return tuplelist
+		curr_timeseries = parse_timeseries(line.split('[')[1].split(']')[0])
+		all_datasets.append((curr_index,curr_timeseries))
+	return all_datasets
 
 def professors_test_set(filename, datalength):
 	with open(filename,'r') as profs_input:
@@ -50,13 +45,20 @@ def professors_test_set(filename, datalength):
 	profs_input.close()
 	return timeseries
 
-def take_random_training_set(set_length):
-	tuplelist = create_datasets(set_length)
-	shuffle(tuplelist)
-	index,timeseries,first_t,fifth_t = tuplelist[0]
-	if first_t == -1 or fifth_t == -1:
-		print("The dataset isnt long enough to see one or both of the targets.")
-		print("Choose a smaller timeseries length as arg.")
-		exit(1)
-	else:
-		return index,timeseries,first_t,fifth_t
+def take_training_sets(set_length):
+	all_datasets = create_datasets()
+	indexes = []
+	timeseries = []
+	for dataset in all_datasets:
+		indexes.append(dataset[0])
+		timeseries.append(dataset[1])
+	y_data = []
+	x_data = []
+	for serie in timeseries:
+		x_data.append(serie[:set_length])
+		targets = []
+		targets.append(serie[set_length])
+		targets.append(serie[set_length+4])
+		y_data.append(targets)
+
+	return indexes,x_data,y_data,timeseries

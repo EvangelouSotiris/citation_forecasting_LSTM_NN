@@ -3,12 +3,22 @@
 
 import input_provider as ip
 import tensorflow as tf
+import matplotlib.pyplot as plt
+import numpy as np
+from keras.models import Sequential
+from keras.layers.recurrent import LSTM
+from keras.layers.core import Dense, Activation, Dropout
 
-def get_training_dataset(timeseries_size):
-	index,timeseries,t1,t5 = ip.take_random_training_set(timeseries_size)
-	print("Testing paper with index: " + str(index))
-	print("The citation list of its first " + str(timeseries_size) + " years is: " + str(timeseries))
-	print("The target of the next year's citation number is: " + str(t1))
-	print("The target of the citation number after 5 years is: " + str(t5))
+def graph_timeseries(index,timeseries):
+	plt.figure(figsize = (8, 5))
+	plt.plot(timeseries, label = "Citations in the first 15 years")
+	plt.xlabel("Years")
+	plt.ylabel("Citations")
+	plt.title("Yearly citations of index " + str(index))
+	plt.legend()
+	plt.show()
 
-get_training_dataset(10)
+def generate_dataset(timeseries_size):
+	indexes,x,y,timeseries = ip.take_training_sets(timeseries_size)
+	rand = np.random.randint(0,len(indexes))
+	return indexes[rand], np.array(x[rand]), np.array(y[rand]), np.array(timeseries[rand])
