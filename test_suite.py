@@ -15,15 +15,20 @@ from sklearn.preprocessing import MinMaxScaler
 n_batch = 1
 
 def graph_timeseries(given,test,predictions,ts_length):
-    plt.figure(figsize = (8, 5))
-    plt.style.use('seaborn-darkgrid')
-    markers = [ts_length,ts_length+4]
-    plt.plot(given, label = "Given Citations", markevery=markers)
-    plt.plot(test, linestyle='dashed', label = "Real timeseries", markevery=markers)
-    plt.plot(predictions, label = "Predictions")
+    plt.figure(figsize = (10, 6))
+    plt.style.use('ggplot')
+    plt.plot([ts_length],predictions[ts_length],'ro',markersize=4)
+    plt.plot([ts_length+4],predictions[ts_length+4],'ro',markersize=4)
+    plt.plot(given,color='blue', label = "Given Citations")
+    if len(test) >= ts_length:
+	    plt.plot([ts_length],test[ts_length],'o',color='magenta',markersize=4)
+	    if len(test) >= ts_length + 5:
+	    	plt.plot([ts_length+4],test[ts_length+4],'o',color='magenta',markersize=4)
+    plt.plot(test, linestyle='dashed',color='magenta', label = "Real timeseries")
+    plt.plot(predictions, color='red',label="Predictions")
     plt.xlabel("Years")
     plt.ylabel("Citations")
-    plt.title("PLS WERK")
+    plt.title("CE448 Neural Networks and Fuzzy logic - Project\nTime series Forecasting - Test suite graph")
     plt.legend()
     plt.show()
 
@@ -44,9 +49,9 @@ def new_test_run(ts_length,scaler, filename = None):  # Add capability to open f
 	counter = 0
 	np.random.shuffle(ts)
 	for test in ts:
-		counter += 1
-		if counter == 10:
+		if counter == 2:
 			break
+		counter += 1
 		print("\n~~New Test~~")
 		test = test.astype('float32')
 		test = test.reshape((len(test),1))
@@ -84,8 +89,14 @@ def new_test_run(ts_length,scaler, filename = None):  # Add capability to open f
 		test = scaler.inverse_transform(test)
 		given_vals = scaler.inverse_transform(given_vals)
 		preds = scaler.inverse_transform(preds)
-		print('<1 Year after> Expected=%.1f, Predicted=%.1f' %(test[ts_length], preds[ts_length]))
-		print('<5 Years after> Expected=%.1f, Predicted=%.1f' %(test[ts_length+4], preds[ts_length+4]))
+		if len(test) >= ts_length:
+			print('<1 Year after> Expected=%.1f, Predicted=%.1f' %(test[ts_length], preds[ts_length]))
+		else:
+			print('<1 Year after> Predicted=%.1f' %(preds[ts_length]))	
+		if len(test) >= ts_length+5:
+			print('<5 Years after> Expected=%.1f, Predicted=%.1f' %(test[ts_length+4], preds[ts_length+4]))
+		else:
+			print('<5 Years after> Predicted=%.1f' %(preds[ts_length+4]))	
 		graph_timeseries(given_vals,test,preds,ts_length)
 
 #scaler = train_new()
