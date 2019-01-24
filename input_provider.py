@@ -45,20 +45,11 @@ def professors_test_set(filename, datalength):
 	profs_input.close()
 	return timeseries
 
-def take_training_sets(set_length):
+def take_training_sets():
 	all_datasets = create_datasets()
 	indexes = []
 	timeseries = []
 	for dataset in all_datasets:
 		indexes.append(dataset[0])
 		timeseries.append(dataset[1])
-	y_data = []
-	x_data = []
-	for serie in timeseries:
-		x_data.append(serie[:set_length])
-		targets = []
-		targets.append(serie[set_length])
-		targets.append(serie[set_length+4])
-		y_data.append(targets)
-
-	return indexes,x_data,y_data,timeseries
+	return indexes,timeseries

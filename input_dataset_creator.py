@@ -35,11 +35,11 @@ for item in final_list:
     ten_year_cits = []
     year = item.ret_year()
     index = item.ret_index()
-    for i in range(year,year+15):
+    for i in range(year,year+25):
         ten_year_cits.append(cits_by_year(ref_list,whole_list,index, i))
     final_list_cits.append(ten_year_cits)
     lines_to_write.append( str(index) + ": " + str(ten_year_cits)+"\n")
-    print "("+str(counter)+"/"+str(len(final_list))+") " + lines_to_write[counter]
+    print("("+str(counter)+"/"+str(len(final_list))+") " + lines_to_write[counter])
     counter += 1
 
 with open("input_dataset.txt", "w") as f:
