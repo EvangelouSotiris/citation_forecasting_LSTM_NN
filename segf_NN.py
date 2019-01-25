@@ -24,12 +24,7 @@ def get_datasets(timeseries_size):
     indexes,timeseries = get_timeseries(10)
     pandas.DataFrame(timeseries[2201:]).to_csv("Testing_timeseries.csv", index=False)
     timeseries = timeseries[:2201]
-    np.random.shuffle(timeseries)
-    all_timeseries_online = []
-    for serie in timeseries:
-        for observation in serie:
-            all_timeseries_online.append(observation)
-    return np.array(all_timeseries_online)
+    return timeseries
 
 def save_model(model):
     model_json = model.to_json()
@@ -51,35 +46,39 @@ def load_model():
 
     return model
 
-def prepare_XY(scaler):
+def prepare_XY(scaler,input_size):
     timeseries = get_datasets(10)
-    ts = timeseries
-    ts = ts.reshape((len(ts),1))
-    ts = scaler.fit_transform(ts)
-    df = pandas.DataFrame(ts)
-    df = pandas.concat([df, df.shift(1)], axis=1)
-    df.dropna(inplace=True)
-    values = df.values
-    X,y = values[:, 0], values[:, 1]
-    X = X.reshape(len(X), 1, 1)
+    X = []
+    y = []
+    for serie in timeseries:
+        X.append(serie[:input_size])
+        y.append(serie[input_size])
+    X = np.array(X)
+    X = X.astype('float64')
+    y = np.array(y)
+    y = y.astype('float64')
+    #X = scaler.fit_transform(X)
+    #y = y.reshape(-1,1)
+    #y = scaler.fit_transform(y)
     return X,y
 
 def train():
 
     scaler = MinMaxScaler(feature_range = (0,1))
-    n_batch = 1
-    X,y = prepare_XY(scaler)
-
+    X,y = prepare_XY(scaler,10)
+    X = X.reshape(X.shape[0],X.shape[1],1)
+    
     model = Sequential()
-    model.add(LSTM(n_batch, batch_input_shape=(n_batch, X.shape[1], X.shape[2]), stateful=True))
+    model.add(LSTM(100, input_shape=(10,1),return_sequences=True, stateful=False))
+    model.add(LSTM(50,stateful=False))
     model.add(Dense(1))
     adam = keras.optimizers.Adam(lr=0.003, beta_1=0.9, beta_2=0.999, epsilon=1e-8)
-    model.compile(loss='mean_squared_error', optimizer=adam)
-    early_stopping_monitor = EarlyStopping(monitor="loss",patience=2, min_delta=0.00001)
+    model.compile(loss='mean_squared_error',metrics=['acc'], optimizer=adam)
+    early_stopping_monitor = EarlyStopping(monitor="loss",patience=15, min_delta=0.00001)
 
-    for j in range(5):  # epochs
-        model.fit(X, y, epochs=200, batch_size=n_batch, verbose=1, shuffle=False, callbacks=[early_stopping_monitor])
-        X,y = prepare_XY(scaler)
+    for i in range(10):
+        model.fit(X, y, epochs=100, batch_size=10, verbose=1, shuffle=False, callbacks=[early_stopping_monitor])
+        model.reset_states()
 
     save_model(model)
     return scaler
@@ -90,10 +89,10 @@ def train_more():
     n_batch = 1
     model = load_model()
     X,y = prepare_XY(scaler)
-    early_stopping_monitor = EarlyStopping(monitor="loss",patience=5, min_delta=0.000005)
+    early_stopping_monitor = EarlyStopping(monitor="loss",patience=4, min_delta=0.000005)
 
-    for j in range(5):  # epochs
-        model.fit(X, y, epochs=200, batch_size=n_batch, verbose=1, shuffle=False, callbacks=[early_stopping_monitor])
+    for j in range(1):  # epochs
+        model.fit(X, y, epochs=10, batch_size=n_batch, verbose=1, shuffle=False, callbacks=[early_stopping_monitor])
         X,y = prepare_XY(scaler)
 
     return scaler

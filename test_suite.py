@@ -17,8 +17,7 @@ n_batch = 1
 def graph_timeseries(given,test,predictions,ts_length):
     plt.figure(figsize = (10, 6))
     plt.style.use('ggplot')
-    plt.plot([ts_length],predictions[ts_length],'ro',markersize=4)
-    plt.plot([ts_length+4],predictions[ts_length+4],'ro',markersize=4)
+    plt.plot([ts_length],predictions,'ro',markersize=4)
     plt.plot(given,color='blue', label = "Given Citations")
     if len(test) >= ts_length:
 	    plt.plot([ts_length],test[ts_length],'o',color='magenta',markersize=4)
@@ -48,58 +47,32 @@ def new_test_run(ts_length,scaler, filename = None):  # Add capability to open f
 	ts = df.values
 	counter = 0
 	np.random.shuffle(ts)
-	for test in ts:
-		if counter == 2:
-			break
-		counter += 1
-		print("\n~~New Test~~")
-		test = test.astype('float32')
-		test = test.reshape((len(test),1))
-		test = scaler.fit_transform(test)
-		df = pandas.DataFrame(test)
-		df = pandas.concat([df, df.shift(-1)], axis=1)
-		df.dropna(inplace=True)
-		values = df.values
-		X,y = values[:, 0], values[:, 1]
-		X = X.reshape(len(X), 1, 1)
-		preds = []
-		given_vals = []
-		preds.append(0.0)
-		for i in range(ts_length):
-			testX = X[i]
-			testy = y[i]
-			testX = testX.reshape(len(testX), 1, 1)
-			
-			yhat = model.predict(testX, batch_size=1, verbose=0)
-			given_vals.append(testX)
-			preds.append(yhat)
-			#print('>Expected=%.1f, Predicted=%.1f' %(testy, yhat))
 
-		for i in range(4):
-			temp = yhat
-			temp = temp.reshape(1,1,1)
-			yhat = model.predict(temp,batch_size=1,verbose=0)
-			preds.append(yhat)
+	test_timeserie = ts[0]
+	testX = test_timeserie[:ts_length]
+	testy = test_timeserie[ts_length]
 
-		preds = np.array(preds)
-		given_vals = np.array(given_vals)
-		preds = preds.reshape((ts_length+5,1))
-		given_vals = given_vals.reshape((len(given_vals),1))
-		#print(preds)
-		test = scaler.inverse_transform(test)
-		given_vals = scaler.inverse_transform(given_vals)
-		preds = scaler.inverse_transform(preds)
-		if len(test) >= ts_length:
-			print('<1 Year after> Expected=%.1f, Predicted=%.1f' %(test[ts_length], preds[ts_length]))
-		else:
-			print('<1 Year after> Predicted=%.1f' %(preds[ts_length]))	
-		if len(test) >= ts_length+5:
-			print('<5 Years after> Expected=%.1f, Predicted=%.1f' %(test[ts_length+4], preds[ts_length+4]))
-		else:
-			print('<5 Years after> Predicted=%.1f' %(preds[ts_length+4]))	
-		graph_timeseries(given_vals,test,preds,ts_length)
+	testX = np.array(testX)
+	testX = testX.astype('float64')
+	testy = np.array(testy)
+	testy = testy.astype('float64')
 
-#scaler = train_new()
+	testX = testX.reshape(1,10,1)
+
+	yhat = model.predict(testX, batch_size=10, verbose=0)
+	
+	print('>Expected=%.1f, Predicted=%.1f' %(testy, yhat))
+
+	#testy = scaler.inverse_transform(testy)
+	#yhat = scaler.inverse_transform(yhat)
+	#if len(test) >= ts_length:
+	#	print('<1 Year after> Expected=%.1f, Predicted=%.1f' %(testy, yhat))
+	#else:
+	#	print('<1 Year after> Predicted=%.1f' %(yhat))	
+	testX = testX.reshape(10,1)
+	graph_timeseries(testX,test_timeserie,yhat,ts_length)
+
+scaler = train_new()
 #scaler = train_more()
 scaler = MinMaxScaler(feature_range = (0,1))
 new_test_run(10,scaler)
