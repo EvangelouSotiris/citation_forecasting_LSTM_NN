@@ -13,11 +13,9 @@ import cPickle
 class Items_struct():
     def __init__(self, title):
         self.title = title
-        self.authors = []
         self.id_refs = []
         self.year = ''
         self.index = 0
-        self.abstract = ''
 
     def ret_title(self):
         return self.title
@@ -33,34 +31,23 @@ class Items_struct():
     def ret_year(self):
         return int(self.year)
 
-    def set_pub_venue(self,pub_venue):
-        self.pub_venue = pub_venue
-
     def set_index(self,index):
         self.index = index
 
     def set_id_refs(self,id_ref):
-        self.id_refs.append(id_ref)
+        self.id_refs.append(int(id_ref))
 
     def ret_id_refs(self):
         return self.id_refs
 
-    def set_abstract(self,abstract):
-        self.abstract = abstract
-
     def print_item(self):
         print '~Printing item ...'
         print self.title
-        print self.authors
         print self.year
-        if self.pub_venue:
-            print self.pub_venue
         if self.index:
             print self.index
         if self.id_refs:
             print self.id_refs
-        if self.abstract:
-            print self.abstract
         print '\n'
 
 
@@ -96,14 +83,11 @@ def main():
             if infotype == 1:
                 new_item = Items_struct(content.split('\n')[0])
             elif infotype == 2:
-                for i in range(content.count(',')):
-                    new_item.set_author(content.split(',')[i])
-                new_item.set_author(content.split(',')[content.count(',')].split('\n')[0])
+                continue
             elif infotype == 3:
                 new_item.set_year(content.split('\n')[0])
             elif infotype == 4:
-                if content:
-                    new_item.set_pub_venue(content.split('\n')[0])
+                continue
             elif infotype == 5:
                 if content:
                     new_item.set_index(content.split('\n')[0])
@@ -112,8 +96,7 @@ def main():
                     citations.append(content.split('\n')[0])
                     new_item.set_id_refs(content.split('\n')[0])
             elif infotype == 7:
-                if content:
-                    new_item.set_abstract(content.split('\n')[0])
+                continue
             else:
                 refs = new_item.ret_id_refs()
                 if len(refs)!=0:
