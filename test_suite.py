@@ -1,6 +1,5 @@
 from segf_NN import get_datasets
 from segf_NN import train
-from segf_NN import train_more
 from segf_NN import save_model
 from segf_NN import load_model
 import tensorflow as tf
@@ -11,8 +10,6 @@ import pandas
 from keras.models import model_from_json
 from progress.bar import Bar
 from sklearn.preprocessing import MinMaxScaler
-
-n_batch = 1
 
 def graph_timeseries(given,test,predictions,ts_length):
     plt.figure(figsize = (10, 6))
@@ -34,10 +31,6 @@ def graph_timeseries(given,test,predictions,ts_length):
 
 def train_new():
 	scaler = train()
-	return scaler
-
-def train_loaded():
-	scaler = train_more()
 	return scaler
 
 def new_test_run(ts_length,scaler, filename = None):  # Add capability to open files and take tests from there.
@@ -62,17 +55,11 @@ def new_test_run(ts_length,scaler, filename = None):  # Add capability to open f
 	yhat = model.predict(testX, batch_size=10, verbose=0)
 	
 	print('>Expected=%.1f, Predicted=%.1f' %(testy, yhat))
-
-	#testy = scaler.inverse_transform(testy)
-	#yhat = scaler.inverse_transform(yhat)
-	#if len(test) >= ts_length:
-	#	print('<1 Year after> Expected=%.1f, Predicted=%.1f' %(testy, yhat))
-	#else:
-	#	print('<1 Year after> Predicted=%.1f' %(yhat))	
+	
 	testX = testX.reshape(10,1)
 	graph_timeseries(testX,test_timeserie,yhat,ts_length)
 
 scaler = train_new()
-#scaler = train_more()
 scaler = MinMaxScaler(feature_range = (0,1))
-new_test_run(10,scaler)
+for i in range(10):
+	new_test_run(10,scaler)
