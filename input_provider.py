@@ -23,7 +23,7 @@ def parse_timeseries(line):
 def create_datasets():
 	# reading input_dataset.txt and creating a list with the lines to be parsed later on.
 	lines = []
-	with open('input_dataset.txt','r') as input_dataset:
+	with open('final_input.txt','r') as input_dataset:
 		newline = input_dataset.readline()
 		while newline:
 			lines.append(newline)
