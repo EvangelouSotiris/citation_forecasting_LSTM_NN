@@ -19,10 +19,10 @@ def graph_timeseries(test,predictions,ts_length, slide=False):
     else:
     	plt.plot([ts_length],predictions[0],'bo',markersize=6)
     	plt.plot([ts_length+4],predictions[1],'bo',markersize=6)
-    if len(test) >= ts_length:
-	    plt.plot([ts_length],test[ts_length],'o',color='magenta',markersize=4)
-	    if len(test) >= ts_length + 5:
-	    	plt.plot([ts_length+4],test[ts_length+4],'o',color='magenta',markersize=4)
+    	if len(test) >= ts_length:
+    		plt.plot([ts_length],test[ts_length],'o',color='magenta',markersize=4)
+    		if len(test) >= ts_length + 5:
+    			plt.plot([ts_length+4],test[ts_length+4],'o',color='magenta',markersize=4)
     plt.plot(test, linestyle='dashed',color='magenta', label = "Real timeseries")
     plt.xlabel("Years")
     plt.ylabel("Citations")
@@ -35,7 +35,7 @@ def train_new():
 	train()
 
 def new_test_run(ts_length,model,model5, test_timeserie = None):  # Add capability to open files and take tests from there.
-	
+	custom_test_flag = 0
 	if test_timeserie == None:
 		df = pandas.read_csv("Testing_timeseries.csv")
 		ts = df.values
@@ -43,6 +43,7 @@ def new_test_run(ts_length,model,model5, test_timeserie = None):  # Add capabili
 		test_timeserie = ts[0]
 		testX = test_timeserie[:ts_length]
 	else:
+		custom_test_flag = 1
 		length = len(test_timeserie)
 		testX = test_timeserie[length-ts_length:]
 
@@ -56,7 +57,7 @@ def new_test_run(ts_length,model,model5, test_timeserie = None):  # Add capabili
 	print(y1,y5)
 	predictions=[y1,y5]
 	testX = testX.reshape(ts_length,1)
-	if test_timeserie != None:
+	if custom_test_flag:
 		graph_timeseries(test_timeserie,predictions,ts_length,True)
 	else:
 		graph_timeseries(test_timeserie,predictions,ts_length)
