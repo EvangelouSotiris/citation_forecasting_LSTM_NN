@@ -1,14 +1,13 @@
-# Neurofuzzy_project
+# Scientific paper citation forecasting 
 
-The project is for ce448 Neural Fuzzy Networks 6-month project
 To download the repository run:
 ```
-git clone https://bitbucket.org/SotirisEvangelou/neurofuzzy_project.git
+git clone https://github.com/EvangelouSotiris/citation_forecasting_LSTM_NN.git
 ```
 
 # Prerequisites
 
-To run the program firstly you need to have a dir called Project outside the neurofuzzy_project dir.
+To run the program firstly you need to have a dir called "Project" outside the repository's dir.
 Inside that directory you need to copy the file output_acm.txt with our input data.
 
 Download citation-network v1 data by clicking this link: [Aminer](http://aminer.org/lab-datasets/citation/citation-network1.zip)
