@@ -10,7 +10,7 @@
 
 import cPickle
 
-class Items_struct():
+class PaperInfo():
     def __init__(self, title):
         self.title = title
         self.id_refs = []
@@ -41,14 +41,12 @@ class Items_struct():
         return self.id_refs
 
     def print_item(self):
-        print '~Printing item ...'
-        print self.title
-        print self.year
+        print "Title: " + self.title
+        print "Year: " + str(self.year)
         if self.index:
-            print self.index
+            print "Index: " + str(self.index)
         if self.id_refs:
-            print self.id_refs
-        print '\n'
+            print "References: " + str(self.id_refs)
 
 
 def splitter(line):
@@ -81,7 +79,7 @@ def main():
             line = inp.readline()
             content,infotype = splitter(line)
             if infotype == 1:
-                new_item = Items_struct(content.split('\n')[0])
+                new_item = PaperInfo(content.split('\n')[0])
             elif infotype == 2:
                 continue
             elif infotype == 3:

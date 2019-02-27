@@ -1,8 +1,5 @@
 from sys import argv
-from segf_NN import get_datasets
-from segf_NN import train
-from segf_NN import save_model
-from segf_NN import load_model
+from segf_NN import get_datasets,train,save_model,load_model
 from input_provider import parse_timeseries
 import tensorflow as tf
 import matplotlib.pyplot as plt
@@ -11,19 +8,22 @@ import keras
 import pandas
 from keras.models import model_from_json
 from progress.bar import Bar
+import time
 
-def graph_timeseries(given,test,predictions,ts_length):
+def graph_timeseries(test,predictions,ts_length, slide=False):
     plt.figure(figsize = (10, 6))
     plt.style.use('ggplot')
-    plt.plot([ts_length],predictions[0],'ro',markersize=5)
-    plt.plot([ts_length+4],predictions[1],'ro',markersize=5)
-    plt.plot(given,color='blue', label = "Given Citations")
+    if slide == True:
+    	plt.plot([len(test)],predictions[0],'bo',markersize=6)
+    	plt.plot([len(test)+4],predictions[1],'bo',markersize=6)
+    else:
+    	plt.plot([ts_length],predictions[0],'bo',markersize=6)
+    	plt.plot([ts_length+4],predictions[1],'bo',markersize=6)
     if len(test) >= ts_length:
 	    plt.plot([ts_length],test[ts_length],'o',color='magenta',markersize=4)
 	    if len(test) >= ts_length + 5:
 	    	plt.plot([ts_length+4],test[ts_length+4],'o',color='magenta',markersize=4)
     plt.plot(test, linestyle='dashed',color='magenta', label = "Real timeseries")
-    #plt.plot(predictions, color='red',label="Predictions")
     plt.xlabel("Years")
     plt.ylabel("Citations")
     plt.title("CE448 Neural Networks and Fuzzy logic - Project\nTime series Forecasting - Test suite graph")
@@ -34,33 +34,33 @@ def graph_timeseries(given,test,predictions,ts_length):
 def train_new():
 	train()
 
-def new_test_run(ts_length, test_timeserie = None):  # Add capability to open files and take tests from there.
-
-	model = load_model("model1_10batch")
-	model5 = load_model("model5_10batch")
-
+def new_test_run(ts_length,model,model5, test_timeserie = None):  # Add capability to open files and take tests from there.
+	
 	if test_timeserie == None:
 		df = pandas.read_csv("Testing_timeseries.csv")
 		ts = df.values
 		np.random.shuffle(ts)
 		test_timeserie = ts[0]
-
-	testX = test_timeserie[:ts_length]
-	testy = test_timeserie[ts_length]
+		testX = test_timeserie[:ts_length]
+	else:
+		length = len(test_timeserie)
+		testX = test_timeserie[length-ts_length:]
 
 	testX = np.array(testX)
 	testX = testX.astype('float64')
-	testy = np.array(testy)
-	testy = testy.astype('float64')
 
-	testX = testX.reshape(1,10,1)
+	testX = testX.reshape(1,ts_length,1)
 
 	y1 = model.predict(testX, batch_size=1, verbose=0)
 	y5 = model5.predict(testX, batch_size=1,verbose=0)
 	print(y1,y5)
 	predictions=[y1,y5]
-	testX = testX.reshape(10,1)
-	graph_timeseries(testX,test_timeserie,predictions,ts_length)
+	testX = testX.reshape(ts_length,1)
+	if test_timeserie != None:
+		graph_timeseries(test_timeserie,predictions,ts_length,True)
+	else:
+		graph_timeseries(test_timeserie,predictions,ts_length)
+
 
 if __name__ == '__main__':
 
@@ -76,10 +76,30 @@ if __name__ == '__main__':
 			try:
 				f = open(filename, 'r')
 				timeseries = parse_timeseries(f.readline())
-				new_test_run(10,timeseries)
+				if len(timeseries) >= 10 and len(timeseries) < 15:
+					print("Loading models for input of length 10")
+					model = load_model("model1_10batch")
+					model5 = load_model("model5_10batch")
+					new_test_run(10,model,model5,timeseries)
+				elif len(timeseries) >= 15:
+					print("Loading models for input of length 15")
+					model = load_model("model1_15batch")
+					model5 = load_model("model5_15batch")
+					new_test_run(15,model,model5,timeseries)
+				elif len(timeseries) >= 5 and len(timeseries) < 10:
+					print("Loading models for input of length 5")	
+					model = load_model("model1_5batch")
+					model5 = load_model("model5_5batch")
+					new_test_run(5,model,model5,timeseries)
 				exit(0)
 			except FileNotFoundError:
 				print('The file mentioned does not exist.(At least in this directory)')
 				exit(1)
-		for i in range(5):
-			new_test_run(10)
+		start_time = time.time()
+
+		model = load_model("model1_10batch")
+		model5 = load_model("model5_10batch")
+		for i in range(10):
+			new_test_run(10,model,model5)
+		elapsedtime = time.time() - start_time
+		print("Elapsed time: " + str(elapsedtime) + " secs")

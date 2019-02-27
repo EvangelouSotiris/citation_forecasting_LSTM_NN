@@ -14,6 +14,7 @@ from progress.bar import Bar
 import keras.optimizers
 from keras.models import model_from_json
 from keras.callbacks import EarlyStopping
+import time
 
 def get_timeseries(timeseries_size):
     indexes,timeseries = ip.take_training_sets()
@@ -62,26 +63,33 @@ def prepare_XY(input_size):
     return X,y1,y5
 
 def train():
+
+    input_size = 10 # input timeseries length
+
     adam = keras.optimizers.Adam(lr=0.003, beta_1=0.9, beta_2=0.999, epsilon=1e-8)
-    early_stopping_monitor = EarlyStopping(monitor="loss",patience=15, min_delta=0.00001)
+    #early_stopping_monitor = EarlyStopping(monitor="loss",patience=10, min_delta=0.00001)
     
     model = Sequential()
-    model.add(LSTM(200, input_shape=(10,1),return_sequences=False, stateful=False))
-    #model.add(LSTM(100,stateful=False))
+    model.add(LSTM(50, input_shape=(input_size,1),return_sequences=False, stateful=False))
+    model.add(Dense(10, activation = 'relu'))
     model.add(Dense(1))
     model.compile(loss='mae',metrics=['acc'], optimizer=adam)
     
     model5 = Sequential()
-    model5.add(LSTM(200, input_shape=(10,1),return_sequences=False, stateful=False))
-    #model5.add(LSTM(100,stateful=False))
+    model5.add(LSTM(50, input_shape=(input_size,1),return_sequences=False, stateful=False))
+    model5.add(Dense(10, activation = 'relu'))
     model5.add(Dense(1))
     model5.compile(loss='mae',metrics=['acc'], optimizer=adam)
     
-    X,y1,y5 = prepare_XY(10)
+    X,y1,y5 = prepare_XY(input_size)
     X = X.reshape(X.shape[0],X.shape[1],1)
-
-    model.fit(X, y1, epochs=300, batch_size=10, verbose=1,shuffle=True, callbacks=[early_stopping_monitor])
-    model5.fit(X, y5, epochs=300, batch_size=10, verbose=1,shuffle=True, callbacks=[early_stopping_monitor])
-
+    start_time = time.time()
+    history = model.fit(X, y1, epochs=250, batch_size=20, verbose=1,shuffle=True)#,callbacks=[early_stopping_monitor])
+    elapsed_time = time.time() - start_time
+    print('Elapsed_time: %d' % elapsed_time + " secs")
     save_model(model,"model1_10batch")
+    plt.plot(history.history['acc'])
+    plt.show()
+
+    history5 = model5.fit(X, y5, epochs=250, batch_size=20, verbose=1,shuffle=True)#, callbacks=[early_stopping_monitor])
     save_model(model5,"model5_10batch")

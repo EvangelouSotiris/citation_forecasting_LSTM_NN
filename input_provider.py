@@ -38,13 +38,6 @@ def create_datasets():
 		all_datasets.append((curr_index,curr_timeseries))
 	return all_datasets
 
-def professors_test_set(filename, datalength):
-	with open(filename,'r') as profs_input:
-		line = profs_input.readline()
-	timeseries = parse_timeseries(line,datalength)	
-	profs_input.close()
-	return timeseries
-
 def take_training_sets():
 	all_datasets = create_datasets()
 	indexes = []
