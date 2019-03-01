@@ -14,7 +14,7 @@ def parse_timeseries(line):
 	i = 0
 	while True:
 		try:
-			citation = int(line.split(' ')[i])
+			citation = int(line.split(',')[i])
 			curr_timeseries.append(citation)
 			i += 1
 		except IndexError:

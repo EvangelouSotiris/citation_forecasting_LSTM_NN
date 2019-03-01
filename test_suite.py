@@ -24,7 +24,7 @@ def graph_timeseries(test,predictions,ts_length, slide=False):
     plt.plot(test, linestyle='dashed',color='magenta', label = "Real timeseries")
     plt.xlabel("Years")
     plt.ylabel("Citations")
-    plt.title("CE448 Neural Networks and Fuzzy logic - Project\nTime series Forecasting - Test suite graph")
+    plt.title("Citation Time series Forecasting - Test suite graph")
     plt.legend()
     plt.show()
 
