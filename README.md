@@ -14,9 +14,9 @@ Download citation-network v1 data by clicking this link: [Aminer](http://aminer.
 # Timeseries length VS features used by NN
 
 Since Keras cannot handle multiple length batches the predictions in relevance to the timeseries length:
--> Is based on the last 5 years, for timeseries of length < 10
--> Is based on the last 10 years, for timeseries of length >= 10 and < 15
--> Is based on the last 15 years, for timeseries of length >= 15 
+* Is based on the last 5 years, for timeseries of length < 10
+* Is based on the last 10 years, for timeseries of length >= 10 and < 15
+* Is based on the last 15 years, for timeseries of length >= 15 
 
 The above three models and their weights after training are included in the repository.
 # Running
