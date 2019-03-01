@@ -11,6 +11,11 @@ To run the program firstly you need to have a dir called "Project" outside the r
 Inside that directory you need to copy the file output_acm.txt with our input data.
 
 Download citation-network v1 data by clicking this link: [Aminer](http://aminer.org/lab-datasets/citation/citation-network1.zip)
+
+Download the libraries used by the program (keras/pandas/tensorflow etc.) with pip:
+```
+pip install <name of the library>
+```
 # Timeseries length VS features used by NN
 
 Since Keras cannot handle multiple length batches the predictions in relevance to the timeseries length:
