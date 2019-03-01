@@ -8,8 +8,6 @@
 
 # THIS PROGRAM SAVES THE WHOLE PARSED TXT LIST OF ITEMS IN THE PICKLE FILE CALLED parsedtxt
 
-import cPickle
-
 class PaperInfo():
     def __init__(self, title):
         self.title = title

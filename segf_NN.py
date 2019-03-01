@@ -2,15 +2,12 @@
 # @author: Giorgos Fragkias
 
 import input_provider as ip
-import tensorflow as tf
 import matplotlib.pyplot as plt
 import numpy as np
 from keras.models import Sequential
 from keras.layers.recurrent import LSTM
 from keras.layers.core import Dense, Activation, Dropout
-import pandas
 import time
-from progress.bar import Bar
 import keras.optimizers
 from keras.models import model_from_json
 from keras.callbacks import EarlyStopping

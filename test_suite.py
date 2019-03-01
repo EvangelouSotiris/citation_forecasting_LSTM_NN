@@ -1,13 +1,11 @@
 from sys import argv
 from segf_NN import get_datasets,train,save_model,load_model
 from input_provider import parse_timeseries
-import tensorflow as tf
 import matplotlib.pyplot as plt
 import numpy as np
 import keras
 import pandas
 from keras.models import model_from_json
-from progress.bar import Bar
 import time
 
 def graph_timeseries(test,predictions,ts_length, slide=False):
