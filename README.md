@@ -18,7 +18,7 @@ pip install <name of the library>
 ```
 # Timeseries length VS features used by NN
 
-Since Keras cannot handle multiple length batches the predictions in relevance to the timeseries length:
+Since Keras cannot handle multiple length input sizes the predictions in relevance to the timeseries length:
 * Is based on the last 5 years, for timeseries of length < 10
 * Is based on the last 10 years, for timeseries of length >= 10 and < 15
 * Is based on the last 15 years, for timeseries of length >= 15 
@@ -47,4 +47,3 @@ where [FILE_PATH] is your .txt's full path.
 
 # Authors
 * **Evangelou Sotiris** - *Developer* - [Github](https://github.com/EvangelouSotiris)
-* **Fragkias Giorgos** - *Developer*
